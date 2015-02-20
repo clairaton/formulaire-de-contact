@@ -73,6 +73,10 @@ if(!empty($_POST)){
 		elseif(!empty($_POST[$array['name']])){
 			$$key=strip_tags($_POST[$array['name']]);
 		}
+		if(($key === 'email') && !filter_var($$key, FILTER_VALIDATE_EMAIL)){
+			$error= true;
+			$errors[$key]= "Veuillez renseigner un email valide";
+		}
 	}
 	// Créer une requête d'insertion PDO avec les données du formulaire
 	if(!$error){
@@ -90,12 +94,12 @@ if(!empty($_POST)){
 // Créer un fichier contacts.php qui va afficher la liste des contacts dans un table html
 ?>
 		<h1>Formulaire de Contact</h1>
-		<form action="form_contact.php" method="POST">
+		<form action="form_contact.php" method="POST" novalidate>
 			<?php
 				// on génère les champs du formulaire
 				foreach($fields as $key => $array){ ?>
-					<?=$array['label']?><span id="required"><?=$required = $array['required']? '*' : '';?></span> : <input type="<?=$array['type']?>" size="<?=$array['size']?>" name="<?=$array['name']?>" value="<?=$$key?>">
-					<p><?=isset($errors[$key])?$errors[$key]:'';?></p>
+					<?=$array['label']?><span class="required"><?=$required = $array['required']? '*' : '';?></span> : <input type="<?=$array['type']?>" size="<?=$array['size']?>" name="<?=$array['name']?>" value="<?=$$key?>">
+					<?=isset($errors[$key])?'<p class="error">'.$errors[$key].'</p>':'';?>
 				<?php
 			}
 			?>
